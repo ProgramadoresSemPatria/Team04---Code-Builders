@@ -6,6 +6,5 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true
-  },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts"]
+  }
 }
