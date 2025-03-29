@@ -1,14 +1,39 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import toast from "react-hot-toast";
+import toast from "react-hot-toast";
 import { create } from "zustand";
 
 
+interface userSchema{
+    id: number;
+    name: string;
+    email: string;
+    password: string;   
+    plans: string;
+}
+
+
+interface loginSchema{
+    email :string,
+    password :string    
+}
+
+
+const logins = [
+    {id:1,name:'Breno Silva',email:'brenosill@hotmail.com',password:'123456',plans:'Empresarial'},
+    {id:2,name:'Breno ',email:'brenobsdo1740365@hotmail.com',password:'123456',plans:'Básico'},
+]
+
+
 interface AuthState {
-    authuser: unknown | null;
+    authuser: userSchema | null;
     isSigninUp: boolean;
     isLoggingIn: boolean;
     isCheckAuth: boolean;
-    setUser: (authuser: unknown) => void;
+    setUser: (authuser: userSchema) => void;
     CheckAuth: () => Promise<void>;
+    logout: () => Promise<void>;
+    login : (data : loginSchema) => Promise<boolean>;
   }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -16,12 +41,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     isSigninUp: false,
     isLoggingIn: false,
     isCheckAuth: false,
-  
     setUser: (authuser) => set({ authuser }),
-
     CheckAuth: async () => {
-        try {        
-            set({ authuser: null, isCheckAuth: true });
+        try {       
+            const id = localStorage.getItem('id');
+
+            if (id) {                
+                const user = logins.find((item) => item.id === Number(id));
+                set({ authuser: user, isCheckAuth: true });
+            }
         } catch (err) {
             console.log(err);
             set({ authuser: null, isCheckAuth: true });
@@ -51,50 +79,51 @@ export const useAuthStore = create<AuthState>((set) => ({
     //     }
 
     // },
-    // logout : async () =>{
+    logout : async () =>{
 
-    //     try {   
+        try {   
             
-    //         await api.post('/user/logout', {}, {
-    //             headers: {
-    //             "Content-Type": "application/json"
-    //             }
-    //         });
-    //         set({authuser: null});
-    //         toast.success('Loggout')
-    //     } catch (error) {
+            localStorage.clear();
+            set({ authuser: null, });
+            toast.success('Loggout')
 
-    //         toast.error(error.response.data.message)
-    //     }
+        } catch (error) {
+
+            // toast.error(error.response.data.message)
+            toast.error('Erro no login')
+        }
     
-    // },
-    // login : async(data) =>{
-    //     set({isLoggingIn:true})
-    //     try{
+    },
+    login : async(data : loginSchema) =>{
+        set({isLoggingIn:true})
+
+        try{
                
-    //         const res = await api.post('/user/login', data, {
-    //             headers: {
-    //             "Content-Type": "application/json"
-    //             }
-    //         });
+            const res = logins.find((item) => item.email === data.email && item.password === data.password);
 
-    //         set({authuser: res.data});
-    //         toast.success('Success')
+            if(res){                                
+                localStorage.setItem('id',String(res?.id));
+                set({authuser: res});
+                toast.success('Success')
 
-          
-    //         return true
+                return true
+            }
+            
+            toast.error('E-mail ou senha inválidos')
+            return true
 
-    //     } catch (error) {
-    //         toast.error(error.response.data.message)
+        } catch (error) {
+            // toast.error(error.response.data.message)
+            toast.error('Erro no login')
 
-    //         return true
-    //     }finally{
+            return true
+        }finally{
 
-    //         set({isLoggingIn:false})
-    //     }
+            set({isLoggingIn:false})
+        }
     
 
-    // },
+    },
 
 }));
 

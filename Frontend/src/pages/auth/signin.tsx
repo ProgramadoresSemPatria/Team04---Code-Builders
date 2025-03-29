@@ -69,8 +69,8 @@ const SignIn = ()=> {
                             {showPassword ? <Eye size={20} /> : <EyeOff size={20}/>}
                         </button>
 
-                        {errors.password && <p className="text-red-500">{errors.password.message}</p>}				
                     </div>                  
+                    {errors.password && <p className="text-red-500">{errors.password.message}</p>}				
                 </div>
 
                 <div className="mt-6">
