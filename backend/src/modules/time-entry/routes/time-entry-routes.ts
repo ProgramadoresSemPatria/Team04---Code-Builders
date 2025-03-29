@@ -9,6 +9,9 @@ import {
 const timeEntryController = makeTimeEntryController();
 
 export default (router: Router): void => {
+  router.get('/time-entries', (req, res, next) =>
+    timeEntryController.getUserTimeEntries(req, res, next)
+  );
   router.post(
     '/time-entries',
     validate(CreateTimeEntrySchema),
