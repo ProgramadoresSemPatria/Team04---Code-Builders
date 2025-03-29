@@ -13,7 +13,7 @@ const menuItems = [
 	{ name: "Dashboard", path: "/dashboard", icon: <Home size={20} />, plans : ['Básico', 'Profissional','Empresarial'] },
 	{ name: "Clientes", path: "/dashboard/clientes", icon: <Users size={20} /> , plans : ['Básico', 'Profissional','Empresarial']  },
 	{ name: "Projetos", path: "/dashboard/projetos", icon: <FileText size={20} />, plans : ['Básico', 'Profissional','Empresarial']  },
-	{ name: "Tempo", path: "/dashboard/tempo", icon: <Clock size={20} />, plans : ['Profissional','Empresarial']  },
+	{ name: "TimeSheet", path: "/dashboard/timesheet", icon: <Clock size={20} />, plans : ['Profissional','Empresarial']  },
 	{ name: "Faturas", path: "/dashboard/faturas", icon: <Receipt size={20} /> , plans : ['Profissional','Empresarial']  },
 	{ name: "Relatórios", path: "/dashboard/relatorios", icon: <BarChart size={20} /> , plans : ['Empresarial'] }
   ];;
