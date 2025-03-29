@@ -2,7 +2,7 @@
   "name": "FreelancerCrm",
   "version": "1.0.0",
   "description": "FreelancerCrm frontend and backend",
-  "main": "server.js",
+  "main": "./server.js",
   "scripts": {
     "build": "pnpm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend && pnpm run build --prefix backend",
     "start": "pnpm run start --prefix backend",
