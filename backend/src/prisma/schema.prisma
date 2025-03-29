@@ -21,6 +21,7 @@ model User {
   neighborhood  String?
   postalCode    String?
   isEmailVerified  Boolean @default(false)
+  isPaymentDone    Boolean @default(false)
   projects     Project[]
   clients     Client[]
   timeEntries     TimeEntry[]
