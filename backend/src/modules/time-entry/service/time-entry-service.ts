@@ -29,6 +29,13 @@ export class TimeEntryService {
     this.projectRepository = projectRepository;
   }
 
+  async getUserTimeEntries(userId: number) {
+    const timeEntries = await this.timeEntryRepository.getUserTimeEntries(
+      userId
+    );
+    return timeEntries;
+  }
+
   async create(data: CreateTimeEntryParams) {
     const project = await this.projectRepository.getById(
       data.projectId,
