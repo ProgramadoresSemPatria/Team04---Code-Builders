@@ -13,4 +13,8 @@ export class UserRepository {
     const user = await prisma.user.create({ data: dataToBd });
     return user;
   }
+  async update(id: number, data: any): Promise<User> {
+    const user = await prisma.user.update({ where: { id }, data });
+    return user;
+  }
 }
