@@ -5,6 +5,18 @@ import {
 } from '../service/time-entry-service';
 
 export class TimeEntryRepository {
+  async getUserTimeEntries(userId: number) {
+    return await prisma.timeEntry.findMany({
+      where: { userId },
+      select: {
+        duration: true,
+        description: true,
+        date: true,
+        project: { select: { name: true } },
+      },
+    });
+  }
+
   async getById(id: number, userId: number) {
     const timeEntry = await prisma.timeEntry.findUnique({
       where: { id, userId },
