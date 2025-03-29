@@ -1,7 +1,7 @@
 
 
 export interface ClientesProps{
-    id?:number,
+    id:number,
     userId?: number,
     age: number,
     name : string,
