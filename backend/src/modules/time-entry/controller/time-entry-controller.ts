@@ -7,6 +7,21 @@ export class TimeEntryController {
     this.timeEntryService = timeEntryService;
   }
 
+  async getUserTimeEntries(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.userId!;
+
+      const timeEntries = await this.timeEntryService.getUserTimeEntries(
+        userId
+      );
+
+      res.status(200).json(timeEntries);
+    } catch (error) {
+      console.log('Erro ao obter temporizadores: ', error);
+      next(error);
+    }
+  }
+
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const data = req.body;
