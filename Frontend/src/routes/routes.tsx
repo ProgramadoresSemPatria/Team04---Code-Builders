@@ -7,9 +7,9 @@ import  SignIn  from "../pages/auth/signin";
 import  SignUp from "../pages/auth/signup";
 import DashboardLayout  from "../components/Layout/DashboardLayout";
 import  Dashboard  from "../pages/dashboard/DashboardHome";
-import  Clientes  from "../pages/dashboard/Clientes";
-import  Projetos  from "../pages/dashboard/Projetos";
-import  Tempo  from "../pages/dashboard/Tempo";
+import  Clientes  from "../pages/dashboard/Clientes/Clientes";
+import  Projetos  from "../pages/dashboard/Projetos/Projetos";
+import  TimeSheet  from "../pages/dashboard/TimeSheet/TimeSheet";
 import  Faturas  from "../pages/dashboard/Faturas";
 import  Relatorios  from "../pages/dashboard/Relatorios";
 
@@ -42,7 +42,7 @@ const RoutesComponent = () => {
               <Route index element={<Dashboard />} />
               <Route path="clientes" element={<Clientes />} />
               <Route path="projetos" element={<Projetos />} />
-              <Route path="tempo" element={<Tempo />} />
+              <Route path="timesheet" element={<TimeSheet />} />
               <Route path="faturas" element={<Faturas />} />
               <Route path="relatorios" element={<Relatorios />} />
             </Route>
