@@ -4,14 +4,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GetDadosCliente } from "@/apis/clientes";
+import api from "@/services/Api";
+import { Loader } from "lucide-react";
 
 // Definindo o esquema de validação com Zod
 const AtualizarClienteSchema = z.object({
     name: z.string().nonempty('Nome obrigatório'),
-    age: z.string().optional(),
-    city: z.string().optional().nullable(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    postalCode: z.string().optional().nullable(),
 });
 
 // Inferindo os tipos com base no schema Zod
@@ -21,10 +24,11 @@ interface EditarModalProps {
     clientid: number;
     open: boolean;
     onClose: () => void;
+    buscarClientes: () => void;
 }
 
-export const EditarModal = ({ clientid, open, onClose }: EditarModalProps) => {
-    // Usando o useForm renomeado como useFormModal para evitar conflito com o useForm do componente principal
+export const EditarModal = ({ clientid, open, onClose,buscarClientes }: EditarModalProps) => {
+    const [loading,setLoading] = useState<boolean>(false)
     const {
         register: registerModal,
         handleSubmit: handleSubmitModal,
@@ -32,12 +36,7 @@ export const EditarModal = ({ clientid, open, onClose }: EditarModalProps) => {
         reset: resetModal,
     } = useFormModal<FormDataUpdate>({
         resolver: zodResolver(AtualizarClienteSchema),
-        // defaultValues: {
-        //     email: "",
-        //     name: "",
-        //     age: "",
-        //     city: "",
-        // },
+    
     });
 
     // Função para buscar os dados do cliente
@@ -46,15 +45,16 @@ export const EditarModal = ({ clientid, open, onClose }: EditarModalProps) => {
             const response = await GetDadosCliente(clientid);
             resetModal({
                 name: response.name || "",
-                age: String(response.age),
-                city: response.city || "",
+                email: response.email,
+                phone: response.phone,
+                postalCode: response.postalCode || "",
             });
         } catch (error) {
             console.error("Erro ao buscar dados:", error);
         }
     }, [clientid, resetModal]);
 
-    // Usando useEffect para chamar a função de buscar dados
+
     useEffect(() => {
         if (clientid) {
             BuscarDados();
@@ -62,16 +62,37 @@ export const EditarModal = ({ clientid, open, onClose }: EditarModalProps) => {
     }, [BuscarDados, clientid]);
 
     // Função de atualização do cadastro
-    const AtualizarCadastro = async (data: FormDataUpdate) => {
-        console.log("Dados recebidos no AtualizarCadastro:", data);
-        try {
-            // Enviar os dados para a API de atualização (isso deve ser implementado)
-            toast.success("Cadastro atualizado com sucesso");
-        } catch (error) {
-            console.log(error)
-            toast.error("Erro ao atualizar o cadastro");
-        } finally {
-            onClose(); // Fecha o modal após o envio
+    const AtualizarCadastro = async (data: FormDataUpdate) => {     
+        
+        setLoading(true)
+
+        try{
+            const token = localStorage.getItem('token');
+            const retorno = await api.patch(`/clients/${clientid}`	, data,{
+                headers: {
+                    "Content-Type": "application/json",					
+                    Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
+                    
+                },
+            });	
+
+            resetModal({
+                email: "",
+                name: "",
+                phone:"",
+            });
+
+            setLoading(false)
+            buscarClientes()
+            toast.success(retorno.data.message);
+            onClose()
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        }catch(error:any){
+            setLoading(false)
+            toast.error(error.response?.data?.message)
+            onClose()
+
         }
     };
 
@@ -79,7 +100,7 @@ export const EditarModal = ({ clientid, open, onClose }: EditarModalProps) => {
         <div>
             <Modal isOpen={open} onClose={onClose} className="max-w-[500px] p-5">
                 <form onSubmit={handleSubmitModal(AtualizarCadastro)} className="mt-6">
-                    <h1>Editar Cliente {clientid}</h1>
+                    <h1 className="font-bold text-2xl">Editar Cliente</h1>
                     <div className="grid grid-cols-12 gap-2 py-4">
                         <div className="col-span-12">
                             <label htmlFor="name" className="block text-sm text-gray-800 dark:text-gray-200">Nome</label>
@@ -92,30 +113,46 @@ export const EditarModal = ({ clientid, open, onClose }: EditarModalProps) => {
                         </div>
 
                         <div className="col-span-12">
-                            <label htmlFor="age" className="block text-sm text-gray-800 dark:text-gray-200">Idade</label>
+                            <label htmlFor="age" className="block text-sm text-gray-800 dark:text-gray-200">E-mail</label>
                             <input 
-                                {...registerModal("age")}
-                                type="number"
-                                placeholder="Idade"
+                                {...registerModal("email")}
+                          
+                                placeholder="E-mail"
                                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                             />
-                            {errorsModal.age && <p className="text-red-500">{errorsModal.age.message}</p>}
+                            {errorsModal.email && <p className="text-red-500">{errorsModal.email.message}</p>}
                         </div>
 
                         <div className="col-span-12">
-                            <label htmlFor="city" className="block text-sm text-gray-800 dark:text-gray-200">Cidade</label>
+                            <label htmlFor="city" className="block text-sm text-gray-800 dark:text-gray-200">Celular</label>
                             <input 
-                                {...registerModal("city")}
-                                placeholder="Cidade"
+                                {...registerModal("phone")}
+                                placeholder="Celular"
                                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                             />
-                            {errorsModal.city && <p className="text-red-500">{errorsModal.city.message}</p>}
+                            {errorsModal.phone && <p className="text-red-500">{errorsModal.phone.message}</p>}
+                        </div>
+
+                        <div className="col-span-12">
+                            <label htmlFor="city" className="block text-sm text-gray-800 dark:text-gray-200">Cep</label>
+                            <input 
+                                {...registerModal("postalCode")}
+                                placeholder="Cep"
+                                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                            />
+                            {errorsModal.postalCode && <p className="text-red-500">{errorsModal.postalCode.message}</p>}
                         </div>
                     </div>
 
                     <div className="flex items-center justify-end w-full gap-3 mt-8">
                         <Button variant="destructive" onClick={onClose}>Fechar</Button>
-                        <Button type="submit">Gravar</Button>
+                        <Button type="submit" 	disabled={loading}>							
+                            {loading ? (
+                                <Loader className="animate-spin" />
+                            ) : (
+                                "Entrar"
+                            )}
+                        </Button>
                     </div>
                 </form>
             </Modal>
