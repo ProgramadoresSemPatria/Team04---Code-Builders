@@ -28,8 +28,8 @@ const SignIn = ()=> {
       } = useForm<FormData>({resolver: zodResolver(LoginSchema),});useForm<FormData>();
 
     const onSubmit = async(data: FormData) => {
-        const retorno = await login(data);
-        console.log(retorno)
+        await await login(data);
+
     };
 
   return (
@@ -74,14 +74,18 @@ const SignIn = ()=> {
                 </div>
 
                 <div className="mt-6">
-                    <button className='w-full cursor-pointer btn btn-sm bg-[#18181B] text-white p-2 rounded-md' type='submit' disabled={isLoggingIn}>
-
+                    <button
+                        className="w-full cursor-pointer btn btn-sm bg-[#18181B] text-white p-2 rounded-md text-center flex justify-center items-center"
+                        type="submit"
+                        disabled={isLoggingIn}
+                        >
                         {isLoggingIn ? (
-                            <Loader className='animate-spin'/>
-                        ) :
+                            <Loader className="animate-spin" />
+                        ) : (
                             "Entrar"
-                        }                            
-					</button>
+                        )}
+                    </button>
+
 
                 </div>
             </form>
