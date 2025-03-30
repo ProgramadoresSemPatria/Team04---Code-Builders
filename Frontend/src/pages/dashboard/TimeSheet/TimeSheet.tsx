@@ -1,21 +1,24 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumbs"
-
 import { Button } from "@/components/ui/button"
+import { Eye, EyeOff, Loader } from "lucide-react"
 import toast from "react-hot-toast"
 import { ProjetosProps } from "@/@types/projetos"
 import { GetAllProjetos } from "@/apis/projetos"
+import api from "@/services/Api"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { TimeSheetProps } from "@/@types/timesheet";
+import { GetAllTimeSheet } from "@/apis/timesheet"
+import { formataData } from "@/utils/formatadata"
 
 const Schema = z.object({
     projectId: z.preprocess((val) => Number(val), z.number().min(1, "Selecione o projeto")),
-	date: z.string({
-		required_error: "Selecione uma data.",
-	}),
+	
+	date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Selecione uma data"),
 	duration: z.coerce
 	  .number({required_error: "Digite a horas.",
 	}).positive("Horas tem que ser positiva.")
@@ -25,79 +28,83 @@ const Schema = z.object({
 	  .max(500, "Descrição não pode exceder 500 caracteres."),
 });
 
-// Inferindo os tipos com base no schema Zod
+
 type FormSchema = z.infer<typeof Schema>;
-
-
-export default function TimesheetForm() {
+const TimeSheet = () => {
 
 	const [projects,setProjects] = useState<ProjetosProps[]>([])
-	
+	const [loading,setLoading] = useState<boolean>(false)
+	const [showExamples, setShowExamples] = useState(true)
+	const [timesheets,setTimesheets] = useState<TimeSheetProps[]>([])
+
+
+	const BuscarHoras = useCallback(async () => {
+		const response = await GetAllTimeSheet();
+		setTimesheets(response);	
+	},[])
+
 	const BuscarProjetos = useCallback(async () => {
 		const response = await GetAllProjetos();
 		setProjects(response);	
 	},[])
 
 	useEffect(() =>{
-
+		BuscarHoras()
 		BuscarProjetos()
-	},[BuscarProjetos])
+	},[BuscarProjetos,BuscarHoras])
 
 
-  const {
+	const totalhoras = timesheets.reduce((total, item) => total + item.duration, 0);
+
+
+
+	const {
 		register,
 		handleSubmit,
-		formState: { errors },
 		reset,
-	  } = useForm<FormSchema>({resolver: zodResolver(Schema),});useForm<FormSchema>()
+	formState: { errors },
+	} = useForm<FormSchema>({resolver: zodResolver(Schema),});useForm<FormSchema>();
 
-  function onSubmit(data: FormSchema) {
-	console.log(data)
-	reset({
-		projectId: 0,
-		date: "",
-		duration: 0,
-		description: "",
-	});
-    toast.custom((t) => (
-		<div
-		  className={`${
-			t.visible ? 'animate-enter' : 'animate-leave'
-		  } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-		>
-		  <div className="flex-1 w-0 p-4">
-			<div className="flex items-start">
-			  <div className="flex-shrink-0 pt-0.5">
-				<img
-				  className="h-10 w-10 rounded-full"
-				  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=6GHAjsWpt9&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-				  alt=""
-				/>
-			  </div>
-			  <div className="ml-3 flex-1">
-				<p className="text-sm font-medium text-gray-900">
-				  Emilia Gates
-				</p>
-				<p className="mt-1 text-sm text-gray-500">
-				  Sure! 8:30pm works great!
-				</p>
-			  </div>
-			</div>
-		  </div>
-		  <div className="flex border-l border-gray-200">
-			<button
-			  onClick={() => toast.dismiss(t.id)}
-			  className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-			>
-			  Close
-			</button>
-		  </div>
-		</div>
-	  ))
+  	const onSubmit = async(data: FormSchema) =>{
+		setLoading(true)
+		try{
+			
+			const token = localStorage.getItem('token');
+
+			const formattedData = {
+				...data,
+				date: new Date(data.date).toISOString(), // Converte para ISO 8601
+			};
+		
+			const retorno = await api.post('/time-entries', formattedData,{
+				headers: {
+					"Content-Type": "application/json",					
+					Authorization: token ? `Bearer ${token}` : '', 
+					
+				},
+			});	
+
+
+			reset({
+				projectId: 0,
+				date: "",
+				duration: 0,
+				description: "",
+			});
+			setLoading(false)
+			toast.success(retorno.data.message);
+			BuscarHoras()
+
+	  	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	  	}catch(error:any){
+			setLoading(false)
+			toast.error(error.response?.data?.message)
+		}
+
+	}
+
 
   
-
-  }
 
   return (
 	<>
@@ -121,18 +128,17 @@ export default function TimesheetForm() {
 										{/* <span className="text-blue-600 font-bold">{formatHours(weeklyHours)}</span> */}
 									</div>
 									<div className="ml-3">								
-										<p className="text-xs text-gray-500">Total: {40} horas</p>
+										<p className="text-xs text-gray-500">Total: {totalhoras} horas</p>
 									</div>
 								</div>
-								<div className="h-4 w-48 bg-gray-200 rounded-full overflow-hidden">
+								{/* <div className="h-4 w-48 bg-gray-200 rounded-full overflow-hidden">
 									<div
 										className="h-full bg-blue-600 rounded-full"
 										// style={{ width: `${Math.min((weeklyHours / 40) * 100, 100)}%` }}
 									></div>
-								</div>
+								</div> */}
 							</div>
 						</div>
-
 
 						
 						<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -162,8 +168,13 @@ export default function TimesheetForm() {
 								</div>
 								<div className="col-span-12 sm:col-span-4">
 									<label htmlFor="date"  className="block text-sm text-gray-800 dark:text-gray-200">Data</label>
-									<input {...register("date")} type="date" placeholder="Horas" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" />
-										{errors.date && <p className="text-red-500">{errors.date.message}</p>}														
+									<input 
+										{...register("date")} 
+										type="date" 
+										placeholder="Data e Hora" 
+										className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" 
+									/>
+									{errors.date && <p className="text-red-500">{errors.date.message}</p>}														
 								</div>
 								<div className="col-span-12 pt-4">
 									<label htmlFor="description" className="block text-sm font-medium text-gray-700">
@@ -184,7 +195,13 @@ export default function TimesheetForm() {
 							</div>
 						
 							<div className="flex justify-end">
-								<Button type="submit">Gravar</Button>
+								<Button type="submit" 	disabled={loading}>							
+									{loading ? (
+										<Loader className="animate-spin" />
+									) : (
+										"Gravar"
+									)}
+                        		</Button>	
 							</div>
 						
 						</form>
@@ -195,6 +212,39 @@ export default function TimesheetForm() {
 			
 			</div>
 
+
+			<div className="w-full bg-white rounded-lg shadow-md overflow-hidden mb-6">
+				<div className="flex justify-between items-center px-6 py-3 bg-gray-50 border-b">
+					<h2 className="text-sm font-medium text-gray-700">Horas Recentes</h2>
+					<button
+						type="button"
+						className="text-xs text-blue-600 hover:text-blue-800"
+						onClick={() => setShowExamples(!showExamples)}
+						>
+						{showExamples ? <EyeOff /> :<Eye /> } 
+					</button>
+				</div>
+
+				{showExamples && (
+					<div className="divide-y divide-gray-200">
+					{timesheets.map((item, index) => (
+						<div key={index} className="px-6 py-4">
+						<div className="flex justify-between items-start">
+							<div>
+							<h3 className="text-sm font-medium text-gray-800">{item.project.name}</h3>
+							<p className="text-xs text-gray-500">{formataData(String(item.date))}</p>
+							</div>
+								<div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+								{item.duration} hrs
+								</div>
+							</div>
+							<p className="mt-2 text-sm text-gray-600">Descrição: {item.description}</p>
+							</div>
+						))}
+						</div>
+				)}
+			</div>
+
      
     	</div>
 	
@@ -202,3 +252,6 @@ export default function TimesheetForm() {
   )
 }
 
+
+
+export default TimeSheet;
