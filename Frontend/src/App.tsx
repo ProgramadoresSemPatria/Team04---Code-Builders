@@ -1,5 +1,6 @@
 import { Toaster } from "react-hot-toast";
 import RoutesComponent from "./routes/routes";
+import { BrowserRouter } from "react-router-dom";
 
 const App =() => {
 	return (
@@ -11,7 +12,10 @@ const App =() => {
 					duration: 4000
 				}}
 			/>
-			<RoutesComponent />
+			<BrowserRouter>	
+
+				<RoutesComponent />	
+			</BrowserRouter>
 		</div>
 		
 	)
