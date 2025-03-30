@@ -1,6 +1,8 @@
 export interface TimeSheetProps{
-    id: number,
-    duration: number
+    duration: number,
     description : string,
     date : Date,
+    project :{
+        name: string
+    }
 }
