@@ -37,8 +37,8 @@ const SignIn = ()=> {
     <div className="flex h-screen w-full flex-col items-center justify-center">
         <Link to="/" className="absolute left-4 top-4 md:left-8 md:top-8">
             <button type="button" className="flex items-center gap-1">
-            <BarChart3 className="h-5 w-5" />
-            <span className="font-bold">FreelancerCRM</span>
+                <BarChart3 className="h-5 w-5" />
+                <span className="font-bold">FreelancerCRM</span>
             </button>
         </Link>
 
