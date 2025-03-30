@@ -1,5 +1,5 @@
 import React, { useState,useCallback, useEffect} from "react";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight ,Plus, Edit} from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight ,Plus, Edit, Loader, Trash2} from "lucide-react";
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -13,10 +13,12 @@ import { GetAllProjetos } from "@/apis/projetos";
 import { FormataReal } from "@/lib/FormataReal";
 import { GetAllClients } from "@/apis/clientes";
 import { ClientesProps } from "@/@types/clientes";
+import api from "@/services/Api";
 
-type DataType = { name: string; clientId: number; status: string;price:number; };
+type DataType = { id: number,name: string; clientId: number; status: string;price:number; };
 
 const columns: { key: keyof DataType | "action"; label: string }[] = [
+	{ key: "id", label: "#ID" },	
 	{ key: "name", label: "Projeto" },	
 	{ key: "clientId", label: "Client" },	
 	{ key: "status", label: "Status" },
@@ -34,7 +36,8 @@ type FormDataCreate = z.infer<typeof Schema>;
 
 
 const Projetos = () => {
-	
+
+	const [loading,setLoading] = useState<boolean>(false)
 	const [projects,setProjects] = useState<ProjetosProps[]>([])
 	const [clients,setClients] = useState<ClientesProps[]>([])
 	const [isOpen,setisOPen] = useState<boolean>(false)
@@ -102,26 +105,44 @@ const Projetos = () => {
 			formState: { errors },
 		  } = useForm<FormDataCreate>({resolver: zodResolver(Schema),});useForm<FormDataCreate>();
 	
-	const handleSubmitCreate = async(data: FormDataCreate) => {
-		// try{
+	const CadastrarProjeto = async(data: FormDataCreate) => {
 
-		// 	console.log(data)
+		setLoading(true)
+		try{
 
-		// }catch(error){
+			
+			const token = localStorage.getItem('token');
+			const retorno = await api.post(`/projects`,data,{
+				headers: {
+					"Content-Type": "application/json",					
+					Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
+					
+				},
+			});	
 
-		// 	toast.error(error?.response?.data?.message)
-		// }.
+			setLoading(false)
+			if(retorno){
 
-		reset({
-			name: "",
-			clientId: 0,
-			price:0
-		});
+				reset({
+					name: "",
+					clientId: 0,
+					price:0
+				});
+	
+				toast.success(retorno.data.message);
+				setisOPen(false)
+				BuscarProjetos()
+			}
 
-		console.log(data)
-		toast.success('Cadastro realizado com sucesso');
-		setisOPen(false)
-		BuscarProjetos()
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		}catch(error:any){
+			setLoading(false)
+			toast.error(error.response?.data?.message)
+		}
+
+
+
 	};
 
 	const BuscarClientes = useCallback(async () => {
@@ -150,6 +171,29 @@ const Projetos = () => {
 		setIsModalUpdate(false);
 	};
 
+	const ExcluirProjeto = async(projectId: number) => {
+	
+		try{
+			const token = localStorage.getItem('token');
+			const retorno = await api.delete(`/projects/${projectId}`,{
+				headers: {
+					"Content-Type": "application/json",					
+					Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
+					
+				},
+			});	
+
+			
+			toast.success(retorno.data.message);	
+			BuscarProjetos()
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		}catch(error:any){
+			
+			toast.error(error.response?.data?.message)
+		}
+
+	};
 
   	return (
 		<>		
@@ -160,9 +204,10 @@ const Projetos = () => {
 				<Modal
                     isOpen={isOpen}
                     onClose={() => setisOPen(false)}
-                    className="max-w-[500px] m-10 p-5 lg:p-10"
+                    className="max-w-[500px] m-10 p-5 "
                 >
-					<form onSubmit={handleSubmit(handleSubmitCreate)} className="mt-6">
+					<form onSubmit={handleSubmit(CadastrarProjeto)} className="mt-6">
+					<h1 className="font-bol text-2xl">Cadastro Projeto</h1>
 						<div className="grid grid-cols-12 gap-2 py-4">
 							<div className="col-span-12">
 								<label htmlFor="name" className="block text-sm text-gray-800 dark:text-gray-200">Nome</label>
@@ -182,8 +227,6 @@ const Projetos = () => {
 								</select>
 								{errors.clientId && <p className="text-red-500">{errors.clientId.message}</p>}
 							</div>
-
-
 							<div className="col-span-12">
 								<label htmlFor="phone" className="block text-sm text-gray-800 dark:text-gray-200">Preço</label>
 								<input {...register("price")} placeholder="Preço" className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" />
@@ -196,7 +239,13 @@ const Projetos = () => {
 							<Button variant="destructive"  onClick={() => setisOPen(false)}>
 								Fechar  
 							</Button>							
-							<Button type="submit">Gravar</Button>
+							<Button type="submit" 	disabled={loading}>							
+                            {loading ? (
+                                <Loader className="animate-spin" />
+                            ) : (
+                                "Entrar"
+                            )}
+                        </Button>
 						</div>						
 					</form>					
                 </Modal>
@@ -213,6 +262,8 @@ const Projetos = () => {
 					/>
 				
 				</div>
+
+				{currentPageData.length > 0 ? (
 				<table className="min-w-full table-auto bg-white border border-gray-200 rounded-lg overflow-hidden">
 					<thead className="bg-gray-100">
 						<tr>
@@ -239,6 +290,7 @@ const Projetos = () => {
 					<tbody>
 						{currentPageData.map((row, index) => (
 							<tr key={index} className="border-b hover:bg-gray-50">
+								<td className="p-3">{row.id}</td>
 								<td className="p-3">{row.name}</td>
 								<td className="p-3">{row.clientId}</td>
 								<td className="p-3">{row.status || '----'}</td>
@@ -249,15 +301,35 @@ const Projetos = () => {
 										projectId={projectId} 
 										open={IsModalUpdate} 
 										onClose={handleFecharModal} 
+										buscarProjetos={BuscarProjetos}
 										/>
-									{/* <Button variant="destructive" onClick={() => setIsModalUpdate(true)} >< Trash2Icon /></Button> */}
 									
+									<div>
+
+											<Button 
+												variant="destructive" 
+												onClick={() => ExcluirProjeto(row.id)}  
+												title="Excluir"
+											>
+												<Trash2 />
+											</Button>
+										</div>
 								
 								</td>
 							</tr>
 						))}
 				</tbody>
 			</table>
+					
+			) : (
+				<div className="flex items-center justify-center py-10">
+						
+						<Loader className="animate-spin mx-auto" width={50} height={50}/>
+
+					</div>
+				)
+				
+			}
 			
 
 			<div className="mt-2 flex justify-center items-center">

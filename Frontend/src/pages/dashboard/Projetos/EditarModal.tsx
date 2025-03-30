@@ -8,6 +8,8 @@ import { useCallback, useEffect, useState } from "react";
 import { GetAllClients } from "@/apis/clientes";
 import { GetDadosProjeto } from "@/apis/projetos";
 import { ClientesProps } from "@/@types/clientes";
+import api from "@/services/Api";
+import { Loader } from "lucide-react";
 
 // Definindo o esquema de validação com Zod
 const Schema = z.object({
@@ -23,12 +25,13 @@ interface EditarModalProps {
     projectId: number;
     open: boolean;
     onClose: () => void;
+    buscarProjetos: () => void;
 }
 
-export const EditarModal = ({ projectId, open, onClose }: EditarModalProps) => {
+export const EditarModal = ({ projectId, open, onClose ,buscarProjetos}: EditarModalProps) => {
 
     const [clients,setClients] = useState<ClientesProps[]>([])
-
+    const [loading,setLoading] = useState<boolean>(false)
     const {
         register: registerModal,
         handleSubmit: handleSubmitModal,
@@ -73,15 +76,40 @@ export const EditarModal = ({ projectId, open, onClose }: EditarModalProps) => {
 
     // Função de atualização do cadastro
     const AtualizarCadastro = async (data: FormDataUpdate) => {
-        console.log("Dados recebidos no AtualizarCadastro:", data);
-        try {
-            toast.success("Cadastro atualizado com sucesso");
-        } catch (error) {
-            console.log(error)
-            toast.error("Erro ao atualizar o cadastro");
-        } finally {
-            onClose();
-        }
+        setLoading(true)
+        try{
+
+			
+			const token = localStorage.getItem('token');
+			const retorno = await api.patch(`/projects/${projectId}`,data,{
+				headers: {
+					"Content-Type": "application/json",					
+					Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
+					
+				},
+			});	
+
+            setLoading(false)
+			if(retorno){
+
+				resetModal({
+					name: "",
+					clientId: 0,
+					price:0
+				});
+	
+				toast.success(retorno.data.message);
+				onClose()
+                buscarProjetos()
+			}
+
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		}catch(error:any){
+            setLoading(false)
+			toast.error(error.response?.data?.message)
+		}
+
     };
 
 
@@ -90,7 +118,7 @@ export const EditarModal = ({ projectId, open, onClose }: EditarModalProps) => {
         <div>
             <Modal isOpen={open} onClose={onClose} className="max-w-[500px] p-5">
                 <form onSubmit={handleSubmitModal(AtualizarCadastro)} className="mt-6">
-                    <h1>Editar Projeto {projectId}</h1>
+                    <h1 className="font-bol text-2xl">Editar Projeto</h1>
                     <div className="grid grid-cols-12 gap-2 py-4">
                         <div className="col-span-12">
                             <label htmlFor="name" className="block text-sm text-gray-800 dark:text-gray-200">Nome</label>
@@ -123,7 +151,13 @@ export const EditarModal = ({ projectId, open, onClose }: EditarModalProps) => {
 
                     <div className="flex items-center justify-end w-full gap-3 mt-8">
                         <Button variant="destructive" onClick={onClose}>Fechar</Button>
-                        <Button type="submit">Gravar</Button>
+                        <Button type="submit" 	disabled={loading}>							
+                            {loading ? (
+                                <Loader className="animate-spin" />
+                            ) : (
+                                "Entrar"
+                            )}
+                        </Button>
                     </div>
                 </form>
             </Modal>

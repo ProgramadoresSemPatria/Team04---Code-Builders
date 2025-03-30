@@ -10,3 +10,18 @@ export interface UsuarioProps{
     postalCode       : string,
     isEmailVerified  : boolean,
 }
+
+
+export  interface AuthResponse {
+    id: number;
+    name: string;
+    email: string;
+    serviceType: string;
+    phone: string | null;
+    address: string | null;
+    city: string | null;
+    neighborhood: string | null;
+    postalCode: string | null;
+    isEmailVerified: boolean;
+}
+

@@ -1,5 +1,5 @@
 import React, { useState,useCallback, useEffect} from "react";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight ,Plus, Edit} from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight ,Plus, Edit, Loader, Trash2} from "lucide-react";
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,14 +10,16 @@ import { ClientesProps } from "@/@types/clientes";
 import { Modal } from "@/components/Modal/Modal";
 import { EditarModal } from "./EditarModal";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumbs";
+import api from "@/services/Api";
 
-type DataType = { name: string; age: number; city: string; project: number };
+type DataType = {id: number,name: string; email: string; phone: string;postalCode: string;};
 
 const columns: { key: keyof DataType | "action"; label: string }[] = [
+	{ key: "id", label: "#ID" },
 	{ key: "name", label: "Nome" },
-	{ key: "age", label: "Idade" },
-	{ key: "city", label: "Cidade" },
-	{ key: "project", label: "Projeto" },
+	{ key: "email", label: "E-mail" },
+	{ key: "phone", label: "Celular" },
+	{ key: "postalCode", label: "Cep" },
 	{ key: "action", label: "Ação" }, // Coluna para ações, mas não vai nos dados
 ];
 
@@ -32,6 +34,7 @@ type FormDataCreate = z.infer<typeof CadastroClienteSchema>;
 
 const Clientes = () => {
 	
+	const [loading,setLoading] = useState<boolean>(false)
 	const [clientes,setClientes] = useState<ClientesProps[]>([])
 	const [isOpen,setisOPen] = useState<boolean>(false)
 	const [IsModalUpdate,setIsModalUpdate] = useState<boolean>(false)
@@ -62,7 +65,7 @@ const Clientes = () => {
 	const filteredData = clientes.filter((item) => {
 		return (
 			item.name.toLowerCase().includes(search.toLowerCase()) ||
-			item.city.toLowerCase().includes(search.toLowerCase())
+			item.email.toLowerCase().includes(search.toLowerCase())
 		);
 	});
 
@@ -99,24 +102,35 @@ const Clientes = () => {
 		  } = useForm<FormDataCreate>({resolver: zodResolver(CadastroClienteSchema),});useForm<FormDataCreate>();
 	
 	const CadastrarCliente = async(data: FormDataCreate) => {
-		// try{
+		setLoading(true)
+	
+		try{
+			const token = localStorage.getItem('token');
+			const retorno = await api.post('/clients', data,{
+				headers: {
+					"Content-Type": "application/json",					
+					Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
+					
+				},
+			});	
 
-		// 	console.log(data)
+			reset({
+				email: "",
+				name: "",
+				phone:"",
+			});
 
-		// }catch(error){
+			setLoading(false)
+			toast.success(retorno.data.message);
+			setisOPen(false)
+			BuscarClientes()
 
-		// 	toast.error(error?.response?.data?.message)
-		// }.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		}catch(error:any){
+			setLoading(false)
+			toast.error(error.response?.data?.message)
+		}
 
-		reset({
-			email: "",
-			name: "",
-			phone:"",
-		});
-		console.log(data)
-		toast.success('Cadastro realizado com sucesso');
-		setisOPen(false)
-		BuscarClientes()
 	};
 
  
@@ -140,6 +154,31 @@ const Clientes = () => {
 		setIsModalUpdate(false);
 	};
 
+	const ExcluirCliente = async(clientId: number) => {
+	
+		try{
+			const token = localStorage.getItem('token');
+			const retorno = await api.delete(`/clients/${clientId}`,{
+				headers: {
+					"Content-Type": "application/json",					
+					Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
+					
+				},
+			});	
+
+			
+			toast.success(retorno.data.message);			
+			BuscarClientes()
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		}catch(error:any){
+			
+			toast.error(error.response?.data?.message)
+		}
+
+	};
+
+
 
   	return (
 		<>		
@@ -150,9 +189,10 @@ const Clientes = () => {
 				<Modal
                     isOpen={isOpen}
                     onClose={() => setisOPen(false)}
-                    className="max-w-[500px] m-10 p-5 lg:p-10"
+                    className="max-w-[500px] m-10 p-5"
                 >
 					<form onSubmit={handleSubmit(CadastrarCliente)} className="mt-6">
+					<h1 className="font-bold text-2xl">Cadastro Cliente</h1>
 						<div className="grid grid-cols-12 gap-2 py-4">
 							<div className="col-span-12">
 								<label htmlFor="name" className="block text-sm text-gray-800 dark:text-gray-200">Nome</label>
@@ -176,7 +216,14 @@ const Clientes = () => {
 							<Button variant="destructive"  onClick={() => setisOPen(false)}>
 								Fechar  
 							</Button>							
-							<Button type="submit">Gravar</Button>
+							<Button type="submit" 	disabled={loading}>							
+								{loading ? (
+									<Loader className="animate-spin" />
+								) : (
+									"Entrar"
+								)}
+							</Button>
+
 						</div>						
 					</form>					
                 </Modal>
@@ -193,52 +240,88 @@ const Clientes = () => {
 					/>
 				
 				</div>
-				<table className="min-w-full table-auto bg-white border border-gray-200 rounded-lg overflow-hidden">
-					<thead className="bg-gray-100">
-						<tr>
-							{columns.map((column) => (							
-								<th
-									className="sortable p-3 text-left cursor-pointer text-black hover:text-gray-700"
-									onClick={() => handleSort(column.key as keyof DataType)}
-									>
-										{column.label}
-										{sortConfig.key === column.key && (
-											<>
-												{sortConfig.direction === "asc" ? (
-													<ChevronUp className="inline ml-2" />
-												) : (
-													<ChevronDown className="inline ml-2" />
-												)}
-											</>
-									)}
-								
-								</th>
-							))}						
-						</tr>
-					</thead>
-					<tbody>
-						{currentPageData.map((row, index) => (
-							<tr key={index} className="border-b hover:bg-gray-50">
-								<td className="p-3">{row.name}</td>
-								<td className="p-3">{row.age}</td>
-								<td className="p-3">{row.city || '----'}</td>
-								<td className="p-3">{row.project}</td>
-								<td className="flex items-center p-3 gap-3">
-									<Button variant="secondary" onClick={() => handleAbrirModal(row.id)}  title="Editar">< Edit /></Button>
-									<EditarModal 
-										clientid={clientId} 
-										open={IsModalUpdate} 
-										onClose={handleFecharModal} 
-										/>
-									{/* <Button variant="destructive" onClick={() => setIsModalUpdate(true)} >< Trash2Icon /></Button> */}
+
+				{currentPageData.length > 0 ? (
+					
+					<table className="min-w-full table-auto bg-white border border-gray-200 rounded-lg overflow-hidden">
+						<thead className="bg-gray-100">
+							<tr>
+								{columns.map((column) => (							
+									<th
+										className="sortable p-3 text-left cursor-pointer text-black hover:text-gray-700"
+										onClick={() => handleSort(column.key as keyof DataType)}
+										>
+											{column.label}
+											{sortConfig.key === column.key && (
+												<>
+													{sortConfig.direction === "asc" ? (
+														<ChevronUp className="inline ml-2" />
+													) : (
+														<ChevronDown className="inline ml-2" />
+													)}
+												</>
+										)}
 									
-								
-								</td>
+									</th>
+								))}						
 							</tr>
-						))}
-				</tbody>
-			</table>
-			
+						</thead>
+	
+						<tbody>
+						
+							{currentPageData.map((row) => (
+								<tr key={row.id} className="border-b hover:bg-gray-50">
+									<td className="p-3">{row.id}</td>
+									<td className="p-3">{row.name}</td>
+									<td className="p-3">{row.email}</td>
+									<td className="p-3">{row.phone || '----'}</td>
+									<td className="p-3">{row.postalCode || '----'}</td>
+									<td className="flex items-center p-3 gap-3">
+										<div >
+											<Button 
+												variant="secondary" 
+												onClick={() => handleAbrirModal(row.id)}  
+												title="Editar"
+											>
+												<Edit />
+											</Button>
+											<EditarModal 
+												clientid={clientId} 
+												open={IsModalUpdate} 
+												onClose={handleFecharModal} 
+												buscarClientes={BuscarClientes}
+											/>
+										</div>
+										<div>
+
+											<Button 
+												variant="destructive" 
+												onClick={() => ExcluirCliente(row.id)}  
+												title="Excluir"
+											>
+												<Trash2 />
+											</Button>
+										</div>
+									</td>
+
+								</tr>
+	
+							))}
+							
+						</tbody>
+	
+						
+					</table>
+				
+			) : (
+				<div className="flex items-center justify-center py-10">
+						
+						<Loader className="animate-spin mx-auto" width={50} height={50}/>
+
+					</div>
+				)
+				
+			}
 
 			<div className="mt-2 flex justify-center items-center">
 				<button

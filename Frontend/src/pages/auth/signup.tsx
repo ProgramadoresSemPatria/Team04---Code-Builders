@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BarChart3, Eye, EyeOff, Loader } from "lucide-react";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useForm } from "react-hook-form";
@@ -22,7 +22,9 @@ const LoginSchema = z.object({
 type FormData = z.infer<typeof LoginSchema>;
 
 const SignUp = () => {
-	const { isLoggingIn } = useAuthStore();
+
+	const navigate = useNavigate();
+	const { isSigninUp ,signup} = useAuthStore();
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -34,8 +36,15 @@ const SignUp = () => {
 		resolver: zodResolver(LoginSchema),
 	});
 
-	const onSubmit = (data: FormData) => {
-		console.log("Dados do formulário:", data);
+	const onSubmit = async(data: FormData) => {
+		const retorno = await signup(data)
+
+		if(retorno){			
+			navigate('/');
+			return
+		}
+
+
 	};
 
 	return (
@@ -120,25 +129,37 @@ const SignUp = () => {
 					</div>
 
 					<div className="mt-4">						
-						<span className="text-sm font-medium text-gray-700"> Tipo de Serviço </span>
+						<span className="block text-sm text-gray-800 dark:text-gray-200"> Tipo de Serviço </span>
 						<select {...register("serviceType")}	className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
 
-							<option value="">SELECIONE..</option>
-							<option value="SRV">Stevie Ray Vaughn</option>
-							<option value="JM">John Mayer</option>
-							<option value="JH">Jimi Hendrix</option>
-							<option value="BBK">B.B King</option>
-							<option value="AK">Albert King</option>
-							<option value="BG">Buddy Guy</option>
-							<option value="EC">Eric Clapton</option>
+							<option value="">SELECIONE TIPO DE SERVIÇO...</option>
+							<option value="DEV">Desenvolvimento de Software</option>
+							<option value="WEB">Desenvolvimento Web</option>
+							<option value="DESIGN">Design Gráfico</option>
+							<option value="SEO">SEO e Marketing Digital</option>
+							<option value="COPY">Redação e Copywriting</option>
+							<option value="VIDEO">Edição de Vídeo</option>
+							<option value="MKT">Gestão de Mídias Sociais</option>
+							<option value="CONSULT">Consultoria em Negócios</option>
+							<option value="TRAD">Tradução e Legenda</option>
+							<option value="SUPPORT">Suporte Técnico</option>
 						</select>
 						{errors.serviceType && <p className="text-red-500 pt-0.5">{errors.serviceType.message}</p>}
 					</div>
 										
 					<div className="mt-6">
-						<button className="w-full btn btn-sm bg-[#18181B] text-white p-2 rounded-md" type="submit" disabled={isLoggingIn}>
-						{isLoggingIn ? <Loader className="animate-spin" /> : "Cadastrar"}
-						</button>
+					<button
+                        className="w-full cursor-pointer btn btn-sm bg-[#18181B] text-white p-2 rounded-md text-center flex justify-center items-center"
+                        type="submit"
+                        disabled={isSigninUp}
+                        >
+                        {isSigninUp ? (
+                            <Loader className="animate-spin" />
+                        ) : (
+                            "Entrar"
+                        )}
+                    </button>
+
 					</div>
 				</form>
 
