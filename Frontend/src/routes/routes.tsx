@@ -10,8 +10,7 @@ import Dashboard from "../pages/dashboard/DashboardHome";
 import Clientes from "../pages/dashboard/Clientes/Clientes";
 import Projetos from "../pages/dashboard/Projetos/Projetos";
 import TimeSheet from "../pages/dashboard/TimeSheet/TimeSheet";
-import Faturas from "../pages/dashboard/Faturas";
-import Relatorios from "../pages/dashboard/Relatorios";
+import Perfil from "../pages/dashboard/Perfil/Perfil";
 // import Success from "@/pages/payment/Success";
 import Payment from "@/pages/payment/Payment";
 
@@ -63,8 +62,8 @@ const RoutesComponent = () => {
           <Route path="clientes" element={<Clientes />} />
           <Route path="projetos" element={<Projetos />} />
           <Route path="timesheet" element={<TimeSheet />} />
-          <Route path="faturas" element={<Faturas />} />
-          <Route path="relatorios" element={<Relatorios />} />
+          <Route path="perfil" element={<Perfil />} />
+        
         </Route>
       </Routes>
     </div>
