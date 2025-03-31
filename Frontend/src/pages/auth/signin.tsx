@@ -34,15 +34,15 @@ const SignIn = ()=> {
 
   return (
 
-    <div className="flex h-screen w-full flex-col items-center justify-center">
+    <div className="flex h-screen w-full flex-col items-center justify-center gap-3">
         <Link to="/" className="absolute left-4 top-4 md:left-8 md:top-8">
-            <button type="button" className="flex items-center gap-1">
+            <button type="button" className="flex items-center">
                 <BarChart3 className="h-5 w-5" />
                 <span className="font-bold">FreelancerCRM</span>
             </button>
         </Link>
 
-        <div className="w-full  max-w-sm md:max-w-lg  p-6 m-auto mx-auto bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <div className="w-full  max-w-sm md:max-w-lg mt-16 px-4 py-4 sm:mt-20 m-auto mx-auto bg-white rounded-lg shadow-md dark:bg-gray-800">
             <div className="py-5 flex flex-col">
                 <h1 className="text-2xl font-bold">Entrar</h1>
                 <p className="pt-3 from-neutral-100">Entre com seu e-mail e senha para acessar sua conta</p>
