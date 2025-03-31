@@ -23,5 +23,6 @@ export  interface AuthResponse {
     neighborhood: string | null;
     postalCode: string | null;
     isEmailVerified: boolean;
+    isPaymentDone: boolean;
 }
 

@@ -24,7 +24,7 @@ interface AuthState {
     authuser: AuthResponse | null;
     isSigninUp: boolean;
     isLoggingIn: boolean;
-    isCheckAuth: boolean;
+    isCheckAuth: boolean; 
     setUser: (authuser: AuthResponse) => void;
     CheckAuth: () => Promise<void>;
     login : (data : loginSchema) => Promise<boolean>;
@@ -38,21 +38,58 @@ export const useAuthStore = create<AuthState>((set) => ({
     isLoggingIn: false,
     isCheckAuth: false,
     setUser: (authuser) => set({ authuser }),
-    CheckAuth: async () => {
+    login : async(data : loginSchema) =>{
+        set({isLoggingIn:true})
 
-        try {       
-            const storedAuthData = localStorage.getItem("AuthResponse");
+        try{
+            const retorno = await api.post('/login', data);
+          
+             if (retorno?.data) {
 
-            if (storedAuthData) {
+                const { token, user } = retorno.data;
 
-                const authData = decryptData(storedAuthData);
-                set({ authuser: authData, isCheckAuth: true });
+                localStorage.setItem("isPaymentDone", JSON.stringify(user.isPaymentDone));
+                localStorage.setItem("token", token);
+                localStorage.setItem("AuthResponse", encryptData(user)); 
+                set({ authuser: user });
+                
+                toast.success('Success')
+                return true
             }
-           
+        
+            
+            toast.error('E-mail ou senha inválidos')
+            return true
+
+        } catch (error) {
+            // toast.error(error.response.data.message)
+            toast.error('Erro no login')
+
+            return true
+        }finally{
+
+            set({isLoggingIn:false})
+        }
+    
+
+    },
+    CheckAuth: async () => {
+        set({ isCheckAuth: true }); 
+    
+        try {
+            const storedAuthData = localStorage.getItem("AuthResponse");
+      
+    
+            if (storedAuthData) {
+                const authData = decryptData(storedAuthData);
+                set({ authuser: authData});
+            } else {
+                set({ authuser: null });
+            }
         } catch (err) {
-            set({ authuser: null, isCheckAuth: true });
+            set({ authuser: null });
         } finally {
-            set({ isCheckAuth: false });
+            set({ isCheckAuth: false }); // Finaliza a verificação
         }
     },
     signup : async (data : CreateSchema) => {
@@ -89,40 +126,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     
     },
-    login : async(data : loginSchema) =>{
-        set({isLoggingIn:true})
 
-        try{
-            const retorno = await api.post('/login', data);
-          
-             if (retorno?.data) {
-
-                const { token, user } = retorno.data;
-
-                localStorage.setItem("token", token);
-                localStorage.setItem("AuthResponse", encryptData(user)); 
-                set({ authuser: user });
-                
-                toast.success('Success')
-                return true
-            }
-        
-            
-            toast.error('E-mail ou senha inválidos')
-            return true
-
-        } catch (error) {
-            // toast.error(error.response.data.message)
-            toast.error('Erro no login')
-
-            return true
-        }finally{
-
-            set({isLoggingIn:false})
-        }
-    
-
-    },
 
 }));
 

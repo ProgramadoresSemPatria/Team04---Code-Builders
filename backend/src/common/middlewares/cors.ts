@@ -4,5 +4,9 @@ export const cors = (req: Request, res: Response, next: NextFunction): void => {
   res.set('access-control-allow-origin', '*');
   res.set('access-control-allow-methods', '*');
   res.set('access-control-allow-headers', '*');
+  if (req.method === 'OPTIONS') {
+    res.status(200).end(); 
+    return;
+  }
   next();
 };

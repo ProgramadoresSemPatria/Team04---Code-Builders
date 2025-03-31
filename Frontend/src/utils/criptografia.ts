@@ -3,14 +3,13 @@ import CryptoJS from "crypto-js";
 const SECRET_KEY = "chave-super-secreta"; // Mantenha essa chave segura e nunca exponha no front-end
 
 // Função para criptografar os dados antes de salvar no localStorag
-interface PropsData{
-    token:string,
-    user:AuthResponse
-}
+// interface PropsData{
+//     user:AuthResponse
+// }
 
 
 
-const encryptData = (data: PropsData): string => {
+const encryptData = (data: AuthResponse): string => {
     // Criptografa o objeto e converte para string
     const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
     return encrypted;
