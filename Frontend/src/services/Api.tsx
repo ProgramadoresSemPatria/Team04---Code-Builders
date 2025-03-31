@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'https://apis-slyz.onrender.com/api',    
+    baseURL: 'https://apis-slyz.onrender.com/api', 
 });
 
 
