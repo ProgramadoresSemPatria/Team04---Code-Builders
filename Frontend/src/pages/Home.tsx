@@ -1,3 +1,4 @@
+import { FormataReal } from '@/lib/FormataReal';
 import { ArrowRight, BarChart3, Calendar, CheckCircle, Clock, Sparkles, Users } from 'lucide-react'
 
 import { Link } from 'react-router-dom'
@@ -7,45 +8,18 @@ import { Link } from 'react-router-dom'
 const Planos = [
 	{
 		id : 1,
-		title : 'Básico',
-		subtitle : 'Para Freelancers iniciantes',
-		preco : 0,
+		title : 'Premium',
+		subtitle : 'Para Freelancers desde iniciante até o expert.',
+		preco : 79.90,
 		itens : [
-			{title : 'Até 5 clientes'},
-			{title : 'Até 10 projetos'},
+			{title : 'Cadastro de clientes'},
+			{title : 'Cadastro de projetos'},
 			{title : 'Controle básico de tempo'},
 			{title : 'Dashboard básico'},
-		],	
-	},
-	{
-		id : 2,
-		title : 'Profissional',
-		subtitle : 'Para Freelancers em crescimento',
-		preco : 49,
-		itens : [
-			{title : 'Até 20 clientes'},
-			{title : 'Até 40 projetos'},
-			{title : 'CControle avançado de tempo'},
-			{title : 'Relatórios personalizados'},
-			{title : 'Exportação de dados'},
+			{title : 'Suporte prioritário'},
 			{title : 'Suporte por email'},
 		],	
 	},
-	{
-		id : 3,
-		title : 'Empresarial',
-		subtitle : 'Para equipes e agências',
-		preco : 49,
-		itens : [
-			{title : 'Tudo do plano Profissional'},
-			{title : 'Integrações avançadas'},
-			{title : 'Suporte prioritário'},
-			{title : 'Personalização de marca'},
-			{title : 'Exportação de dados'},
-		],	
-	},
-
-
 ]
 
 
@@ -89,7 +63,7 @@ export const Home = () => {
 					<button  className="text-md font-bold transition-colors hover:text-primary cursor-pointer" onClick={() => scrollToSection("preco")}>Planos</button>
 				</nav>
 				<div className="flex items-center gap-4">
-					<Link to="/signin" className='btn btn-sm cursor-pointer  hover:not-focus:bg-amber-100 rounded-md p-2  text-black font-bold px-2'>
+					<Link to="/signin" className='btn btn-sm cursor-pointer  hover:not-focus:bg-gray-200 rounded-md p-2  text-black font-bold px-2'>
 							Login
 						
 					</Link>
@@ -128,7 +102,7 @@ export const Home = () => {
 						<button className="gap-1.5 flex items-center rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
 						onClick={() => scrollToSection("preco")}
 						>
-							Ver planos
+							Ver plano
 						</button>
 						
 					</div>
@@ -209,7 +183,7 @@ export const Home = () => {
 								</li>
 								<li className="flex items-center text-sm text-muted-foreground">
 									<CheckCircle className="mr-2 h-4 w-4 text-primary" />
-									<span>Acompanhamento de prazos</span>
+									<span>Acompanhamento de horas</span>
 								</li>
 								
 							</ul>
@@ -278,7 +252,7 @@ export const Home = () => {
 						</div>
 						<h3 className="mt-4 text-xl font-bold">Acompanhe e fature</h3>
 						<p className="mt-2 text-muted-foreground">
-							Registre o tempo trabalhado, acompanhe o progresso e gere faturas automaticamente.
+							Registre o tempo trabalhado, acompanhe o progresso.
 						</p>
 					</div>
 				</div>
@@ -301,21 +275,21 @@ export const Home = () => {
 					role: "Designer Freelancer",
 					quote:
 					"O FreelancerCRM transformou completamente a forma como gerencio meus projetos. Economizo horas por semana em tarefas administrativas.",
-					avatar: "/placeholder.svg?height=100&width=100",
+					
 				},
 				{
 					name: "Carlos Oliveira",
 					role: "Desenvolvedor Web",
 					quote:
 					"Finalmente encontrei uma ferramenta que entende as necessidades de um freelancer. O controle de tempo e faturamento é simplesmente perfeito.",
-					avatar: "/placeholder.svg?height=100&width=100",
+					
 				},
 				{
 					name: "Mariana Santos",
 					role: "Agência de Marketing",
 					quote:
 					"Gerenciar múltiplos clientes e projetos nunca foi tão fácil. Nossa produtividade aumentou em 40% desde que começamos a usar o FreelancerCRM.",
-					avatar: "/placeholder.svg?height=100&width=100",
+					
 				},
 				].map((testimonial, index) => (
 					<div key={index} className="flex flex-col rounded-2xl border bg-background p-8 shadow-sm">
@@ -323,10 +297,7 @@ export const Home = () => {
 							<p className="text-lg italic text-muted-foreground">"{testimonial.quote}"</p>
 						</div>
 						<div className="mt-6 flex items-center gap-4">
-							<img
-								src={testimonial.avatar || "/placeholder.svg"}
-								alt={testimonial.name}
-								className="h-12 w-12 rounded-full object-cover"
+							<div className="h-12 w-12 rounded-full object-cover bg-gray-100"
 							/>
 							<div>
 								<h4 className="font-bold">{testimonial.name}</h4>
@@ -343,23 +314,21 @@ export const Home = () => {
 			<div className="w-full">
 				<div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
 					<div className="rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-						Planos e Preços
+						Plano e Preço
 					</div>
 					<h2 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
-						Escolha o plano ideal para você
+						O plano ideal para você
 					</h2>
-					<p className="max-w-[85%] text-muted-foreground sm:text-lg">
-						Opções flexíveis para freelancers e agências de todos os tamanhos
-					</p>
+					
 				</div>
-				<div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">	
+				<div className="mx-auto mt-16  flex justify-center">	
 					{Planos.map((item) => (
 						<div className="relative rounded-2xl border bg-background p-8 shadow-sm transition-all hover:shadow-md" key={item.id}>
 							{/* <div className="absolute -right-1 top-2 rounded-full bg-muted px-3 py-1 text-xs font-medium">Grátis</div> */}
 							<h3 className="text-2xl font-bold">{item.title}</h3>
 							<p className="mt-1 text-muted-foreground">{item.subtitle}</p>
 							<div className="mt-6">
-								<span className="text-4xl font-bold">R${item.preco}</span>
+								<span className="text-4xl font-bold">R${FormataReal(item.preco)}</span>
 								<span className="text-muted-foreground">/mês</span>
 							</div>
 							<ul className="mt-6 space-y-3">
