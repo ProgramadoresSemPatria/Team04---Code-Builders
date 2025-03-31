@@ -55,7 +55,8 @@ export class PaymentController {
       if (session.payment_status === 'paid') {
         const userId = session.metadata!.userId;
 
-        await this.userRepository.update(Number(userId), {
+        await this.userRepository.update({
+          id: Number(userId),
           isPaymentDone: true,
         });
 

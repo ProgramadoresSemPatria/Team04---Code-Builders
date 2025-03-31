@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CreateProjectSchema = z.object({
+export const createProjectSchema = z.object({
   name: z.string(),
   clientId: z.coerce.number().positive(),
   status: z
@@ -14,7 +14,7 @@ export const CreateProjectSchema = z.object({
     .optional(),
   price: z.coerce.number().optional(),
 });
-export const UpdateProjectSchema = z.object({
+export const updateProjectSchema = z.object({
   name: z.string(),
   status: z
     .enum([

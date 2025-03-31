@@ -1,9 +1,7 @@
 import { Router } from 'express';
-import { PaymentController } from '../controller/payment-controller';
-import { UserRepository } from '../../user/repository/user-repository';
+import { makePaymentController } from '../../../common/factories/payment-controller-factory';
 
-const userRepository = new UserRepository();
-const paymentController = new PaymentController(userRepository);
+const paymentController = makePaymentController();
 
 export default (router: Router): void => {
   router.post('/payment', (req, res, next) =>

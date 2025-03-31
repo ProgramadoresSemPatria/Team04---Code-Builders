@@ -49,8 +49,8 @@ model Project {
   updatedAt        DateTime             @updatedAt
   createdAt        DateTime            @default(now())
   
-  user User @relation(fields: [userId], references: [id])
-  client          Client          @relation(fields: [clientId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 
@@ -66,7 +66,7 @@ model Client {
   postalCode    String?
   projects Project[] 
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model TimeEntry {
@@ -78,7 +78,7 @@ model TimeEntry {
   date  DateTime
   createdAt   DateTime @default(now())
   
-  project     Project  @relation(fields: [projectId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade )
 }
 
