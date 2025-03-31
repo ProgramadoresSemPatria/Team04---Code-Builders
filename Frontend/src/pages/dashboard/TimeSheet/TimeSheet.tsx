@@ -113,7 +113,7 @@ const TimeSheet = () => {
 		<div className="min-h-screen ">
 			<div className="max-w-full mx-auto">				
 				<div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">				
-					<div className="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4">
+					<div className=" bg-gradient-to-t from-slate-900 to-slate-700 px-6 py-4">
 						<h1 className="text-xl font-bold text-white">Timesheet</h1>
 						<p className="text-blue-100 text-sm mt-1">Registre suas horas trabalhadas em um projeto</p>
 					</div>
