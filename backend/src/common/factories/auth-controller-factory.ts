@@ -1,9 +1,9 @@
-import { AuthController } from '../../../modules/auth/controller/auth-controller';
-import { AuthService } from '../../../modules/auth/service/auth-service';
-import { CompareFieldsValidation } from '../../validators/compare-fields-validation';
-import { UserRepository } from '../../../modules/user/repository/user-repository';
-import { BcryptAdapter } from '../../adapters/cryptography/bcrypt-adapter';
-import { JwtAdapter } from '../../adapters/cryptography/jwt-adapter';
+import { AuthController } from '../../modules/auth/controller/auth-controller';
+import { AuthService } from '../../modules/auth/service/auth-service';
+import { CompareFieldsValidation } from '../validators/compare-fields-validation';
+import { UserRepository } from '../../modules/user/repository/user-repository';
+import { BcryptAdapter } from '../adapters/cryptography/bcrypt-adapter';
+import { JwtAdapter } from '../adapters/cryptography/jwt-adapter';
 
 export const makeAuthController = (): AuthController => {
   const userRepository = new UserRepository();

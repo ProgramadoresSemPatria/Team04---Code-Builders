@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { makeTimeEntryController } from '../../../common/factories/auth/time-entry-controller-factory';
+import { makeTimeEntryController } from '../../../common/factories/time-entry-controller-factory';
 import { validate } from '../../../common/middlewares/validation-middleware';
 import {
-  CreateTimeEntrySchema,
-  UpdateTimeEntrySchema,
+  createTimeEntrySchema,
+  updateTimeEntrySchema,
 } from '../validations/schemas';
 
 const timeEntryController = makeTimeEntryController();
@@ -14,12 +14,12 @@ export default (router: Router): void => {
   );
   router.post(
     '/time-entries',
-    validate(CreateTimeEntrySchema),
+    validate(createTimeEntrySchema),
     (req, res, next) => timeEntryController.create(req, res, next)
   );
   router.patch(
     '/time-entries/:id',
-    validate(UpdateTimeEntrySchema),
+    validate(updateTimeEntrySchema),
     (req, res, next) => timeEntryController.update(req, res, next)
   );
   router.delete('/time-entries/:id', (req, res, next) =>
