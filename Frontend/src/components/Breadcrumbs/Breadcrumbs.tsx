@@ -7,7 +7,7 @@ interface BreadcrumbProps {
 const Breadcrumb = ({ pageName}: BreadcrumbProps) => {{
     
     return (
-        <div className="mb-6 flex justify-end gap-3 pt-6">
+        <div className="mb-6 flex justify-end gap-3 pt-6">           
            
            <nav aria-label="Breadcrumb">
                 <ol className="flex items-center gap-1 text-sm text-gray-700">
