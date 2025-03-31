@@ -46,11 +46,13 @@ const Perfil = () => {
                 address: authuser?.address,
                 city: authuser?.city,
                 neighborhood: authuser?.neighborhood
+              
             },
     });
     
 
     const handleSalvar = async(data: FormData) => {
+        setLoading(true)
         try{
             const token = localStorage.getItem('token');
             const retorno = await api.patch(`/users/${authuser?.id}`,data,{
