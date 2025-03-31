@@ -14,7 +14,7 @@ import Mockdate from 'mockdate';
 
 vi.mock('../../../prisma/db', () => ({
   default: {
-    user: { findUnique: vi.fn(), create: vi.fn() },
+    user: { findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
   },
 }));
 
@@ -22,17 +22,28 @@ const mockUser = () => ({
   id: 1,
   name: 'any_name',
   email: 'any_email@mail.com',
-  password: 'any_password',
   serviceType: 'any_service_type',
-  phone: null,
-  address: null,
-  city: null,
-  neighborhood: null,
-  postalCode: null,
+  password: 'hashed_password',
+  phone: '(11) 98765-4321',
+  address: 'any_address',
+  city: 'any_city',
+  neighborhood: 'any_neighborhood',
+  postalCode: '01234-567',
   isEmailVerified: true,
+  isPaymentDone: false,
+  projects: [],
+  clients: [],
+  timeEntries: [],
   updatedAt: new Date(),
   createdAt: new Date(),
-  project: [],
+});
+
+const mockUpdateUserParams = () => ({
+  id: 1,
+  name: 'updated_name',
+  email: 'updated_email@mail.com',
+  password: 'updated_password',
+  serviceType: 'updated_service_type',
 });
 
 const mockSignUpParams = (): SignUpParams => ({
@@ -118,6 +129,38 @@ describe('UserRepository', () => {
       });
 
       expect(sut.create(mockSignUpParams())).rejects.toThrow();
+    });
+  });
+
+  describe('update', () => {
+    test('Should call prisma update method with correct data', async () => {
+      await sut.update(mockUpdateUserParams());
+
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: {
+          name: 'updated_name',
+          email: 'updated_email@mail.com',
+          password: 'updated_password',
+          serviceType: 'updated_service_type',
+        },
+      });
+    });
+
+    test('Should return user returned by prisma update method', async () => {
+      vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser());
+
+      const result = await sut.update(mockUpdateUserParams());
+
+      expect(result).toStrictEqual(mockUser());
+    });
+
+    test('Should throw if prisma throws', async () => {
+      vi.mocked(prisma.user.update).mockImplementationOnce(() => {
+        throw new Error();
+      });
+
+      expect(sut.update(mockUpdateUserParams())).rejects.toThrow();
     });
   });
 });
