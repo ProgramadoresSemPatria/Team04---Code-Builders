@@ -172,9 +172,4 @@ Certifique-se de que você tenha instalado:
 ---
 
 ## Contato
-- Developers: Duanne Moraes, Mario Mota, Gabriel Melo e Vadilson Brito
-- LinkedIn:
-- [Duanne Moraes](https://www.linkedin.com/in/duanne-moraes-7a0376278/)
-- [Mario Mota](https://www.linkedin.com/in/mario-yuri-mota-lara-1a801b272/)
-- [Gabriel Melo](https://www.linkedin.com/in/gabrielmelo7/)
-- [Vandilson](https://www.linkedin.com/in/vandilson-brito-desenvolvedor-frontend/)
+- Developers: Ricardo Franco dos Santos, Breno Silva, Guilherme Resende, Padilha
