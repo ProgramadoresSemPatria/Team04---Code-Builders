@@ -30,6 +30,7 @@ interface AuthState {
     login : (data : loginSchema) => Promise<boolean>;
     signup : (data : CreateSchema) => Promise<boolean>;
     logout: () => Promise<void>;
+    checkuser: () => Promise<void>;
   }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -126,6 +127,31 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     
     },
+    checkuser : async()=>{
+
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const retorno = await api.get(`/check-user`,{
+                    headers: {
+                        "Content-Type": "application/json",					
+                        Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
+                        
+                    },
+                });
+                
+                if(retorno){
+                    localStorage.setItem("AuthResponse", encryptData(retorno.data)); 
+                    set({ authuser: retorno.data });                 
+                }             
+                
+            } 
+        } catch (err) {
+            set({ authuser: null });
+        }
+    }
+        
+
 
 
 }));
