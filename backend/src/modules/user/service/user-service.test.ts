@@ -21,11 +21,6 @@ const mockUserRepository = {
     postalCode: '01234-567',
     isEmailVerified: true,
     isPaymentDone: false,
-    projects: [],
-    clients: [],
-    timeEntries: [],
-    updatedAt: new Date(),
-    createdAt: new Date(),
   }),
   getByEmail: vi.fn().mockResolvedValue(null),
   update: vi.fn(),
@@ -101,11 +96,6 @@ describe('UserService', () => {
         password: 'hashed_password',
         isEmailVerified: true,
         isPaymentDone: true,
-        projects: [],
-        clients: [],
-        timeEntries: [],
-        updatedAt: new Date(),
-        createdAt: new Date(),
       });
       const updateUserParams = mockUpdateUserParams();
 
@@ -123,11 +113,6 @@ describe('UserService', () => {
         password: 'hashed_password',
         isEmailVerified: true,
         isPaymentDone: false,
-        projects: [],
-        clients: [],
-        timeEntries: [],
-        updatedAt: new Date(),
-        createdAt: new Date(),
       });
       const updateUserParams = mockUpdateUserParams();
 
@@ -184,6 +169,25 @@ describe('UserService', () => {
       });
 
       await expect(sut.getById(1)).rejects.toThrow();
+    });
+
+    test('Should return correct user', async () => {
+      const user = await sut.getById(1);
+
+      expect(user).toStrictEqual({
+        id: 1,
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        serviceType: 'Consultoria',
+        password: 'hashed_password',
+        phone: '(11) 98765-4321',
+        address: 'Rua Exemplo, 123',
+        city: 'São Paulo',
+        neighborhood: 'Centro',
+        postalCode: '01234-567',
+        isEmailVerified: true,
+        isPaymentDone: false,
+      });
     });
   });
 });
