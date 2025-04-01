@@ -20,12 +20,13 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 const RoutesComponent = () => {
-  const { authuser, CheckAuth, isCheckAuth } = useAuthStore();
+  const { authuser, CheckAuth, isCheckAuth,checkuser } = useAuthStore();
   const location = useLocation();
 
   useEffect(() => {
+    checkuser();
     CheckAuth();
-  }, [CheckAuth]);
+  }, [CheckAuth, checkuser]);
 
   if (isCheckAuth) {
     return (
@@ -71,3 +72,7 @@ const RoutesComponent = () => {
 };
 
 export default RoutesComponent;
+function checkuser() {
+  throw new Error("Function not implemented.");
+}
+
