@@ -101,6 +101,17 @@ describe('UserRepository', () => {
     });
   });
 
+  describe('getById', () => {
+    test('Should call prisma findUnique with correct value', async () => {
+      const id = 1;
+      await sut.getById(id);
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { id },
+      });
+    });
+  });
+
   describe('create', () => {
     test('Should call prisma created method with correct data', async () => {
       await sut.create(mockSignUpParams());
