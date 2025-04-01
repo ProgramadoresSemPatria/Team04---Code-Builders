@@ -19,6 +19,8 @@ export class UserController {
       if (password) {
         const hashedPassword = await this.hasher.hash(password);
         data.password = hashedPassword;
+      } else {
+        delete data.password;
       }
 
       await this.userService.update({ id: Number(id), ...data });
