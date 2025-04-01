@@ -27,7 +27,7 @@ type FormData = z.infer<typeof Schema>;
 
 
 const Perfil = () => {
-    const { authuser } = useAuthStore();
+    const { authuser,checkuser } = useAuthStore();
     const [loading,setLoading] = useState<boolean>(false)
     const [password,setPassword] = useState<boolean>(false)
 
@@ -65,6 +65,7 @@ const Perfil = () => {
 
            
             if(retorno){
+                checkuser()
                 setLoading(false)
                 toast.success(retorno.data.message);              
             }
