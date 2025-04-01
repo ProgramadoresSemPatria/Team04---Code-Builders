@@ -167,4 +167,15 @@ describe('UserService', () => {
       await expect(sut.update(mockUpdateUserParams())).rejects.toThrow();
     });
   });
+
+  describe('getById()', () => {
+    test('Should call userRepository.getById with correct value', async () => {
+      const getByIdSpy = vi.spyOn(mockUserRepository, 'getById');
+
+      const id = 1;
+      await sut.getById(id);
+
+      expect(getByIdSpy).toHaveBeenCalledWith(id);
+    });
+  });
 });
