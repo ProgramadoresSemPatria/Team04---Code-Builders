@@ -6,9 +6,7 @@ import { Hasher } from '../../auth/protocols/hasher';
 
 const mockUserService = {
   update: vi.fn(),
-  getById: vi
-    .fn()
-    .mockResolvedValueOnce({ name: 'any_name', email: 'any_email' }),
+  getById: vi.fn().mockResolvedValue({ name: 'any_name', email: 'any_email' }),
 } as unknown as UserService;
 
 const mockHasher = {
@@ -168,6 +166,20 @@ describe('UserController', () => {
       );
 
       expect(mockNext).toHaveBeenCalledWith(error);
+    });
+
+    test('Should return 200 status with user on success', async () => {
+      await sut.getById(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        name: 'any_name',
+        email: 'any_email',
+      });
     });
   });
 });
