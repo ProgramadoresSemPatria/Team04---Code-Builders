@@ -154,5 +154,20 @@ describe('UserController', () => {
 
       expect(getByIdSpy).toHaveBeenCalledWith(userId);
     });
+
+    test('Should call next with error if userService.getById throws', async () => {
+      const error = new Error();
+      vi.spyOn(mockUserService, 'getById').mockImplementationOnce(() => {
+        throw error;
+      });
+
+      await sut.getById(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+    });
   });
 });
