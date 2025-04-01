@@ -5,7 +5,16 @@ import { UpdateUserParams } from '../service/user-service';
 
 export class UserRepository {
   async getById(id: number): Promise<User | null> {
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({ where: { id } ,
+      include: {
+        projects: { select: { id: true } }, 
+        clients: { select: { id: true } }, 
+        timeEntries: { select: { id: true } }
+     }
+    });
+
+    
+    
     return user;
   }
   async getByEmail(email: string): Promise<User | null> {
@@ -24,6 +33,9 @@ export class UserRepository {
       where: { id },
       data: dataToUpdate,
     });
+
     return user;
   }
+
+ 
 }
