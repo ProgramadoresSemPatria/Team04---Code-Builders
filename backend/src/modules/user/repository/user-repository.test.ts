@@ -110,6 +110,14 @@ describe('UserRepository', () => {
         where: { id },
       });
     });
+
+    test('Should return user if it is found', async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser());
+
+      const result = await sut.getById(1);
+
+      expect(result).toStrictEqual(mockUser());
+    });
   });
 
   describe('create', () => {
