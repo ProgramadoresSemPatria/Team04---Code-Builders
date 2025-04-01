@@ -3,6 +3,8 @@
 
 **FreelaCRM** é uma solução eficiente para otimizar a gestão de profissionais freelancers, garantindo maior controle sobre projetos, clientes e faturamento.
 
+Link do Produto: A aplicação está disponível para uso no seguinte link:  **→**  **[https://team04-code-builders.onrender.com/)**
+
 💡 **Por que usar o FreelaCRM?**
 
 Freelancers enfrentam desafios ao gerenciar múltiplos projetos, acompanhar prazos, organizar informações de clientes e calcular ganhos. O FreelaCRM resolve esse problema ao oferecer um sistema intuitivo que:
