@@ -24,5 +24,8 @@ export  interface AuthResponse {
     postalCode: string | null;
     isEmailVerified: boolean;
     isPaymentDone: boolean;
+    projects :number;
+    clients :number;
+    timeEntries :number;
 }
 
