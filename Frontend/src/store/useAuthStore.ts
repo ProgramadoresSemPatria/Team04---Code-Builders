@@ -127,29 +127,42 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     
     },
-    checkuser : async()=>{
+    checkuser : async () => {
 
         try {
             const token = localStorage.getItem('token');
-            if (token) {
-                const retorno = await api.get(`/check-user`,{
-                    headers: {
-                        "Content-Type": "application/json",					
-                        Authorization: token ? `Bearer ${token}` : '', // Adiciona o token se ele existir
-                        
-                    },
-                });
-                
-                if(retorno){
-                    localStorage.setItem("AuthResponse", encryptData(retorno.data)); 
-                    set({ authuser: retorno.data });                 
-                }             
-                
-            } 
+            if (!token) {
+                set({ authuser: null });
+                return;
+            }
+    
+            const { data } = await api.get(`/check-user`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    
+            if (data) {
+                // Convertendo arrays para totais
+                const formattedData = {
+                    ...data,
+                    projects: Array.isArray(data.projects) ? data.projects.length : 0,
+                    clients: Array.isArray(data.clients) ? data.clients.length : 0,
+                    timeEntries: Array.isArray(data.timeEntries) ? data.timeEntries.length : 0,
+                };
+
+                console.log(formattedData);
+    
+                localStorage.setItem("AuthResponse", encryptData(formattedData));
+                set({ authuser: formattedData });
+            } else {
+                set({ authuser: null });
+            }
         } catch (err) {
             set({ authuser: null });
         }
-    }
+    },
         
 
 
