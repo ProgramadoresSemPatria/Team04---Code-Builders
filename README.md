@@ -25,11 +25,9 @@ Seja mais produtivo e tenha total controle sobre seu trabalho com o FreelaCRM!
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
   - [Frontend](#frontend)
   - [Backend](#backend)
-  - [Testes](#testes)
 - [Documentação](#documentação)
 - [Instalação](#instalação)
 - [Executando a Aplicação](#executando-a-aplicação)
-- [Como Contribuir](#como-contribuir)
 - [Contato](#contato)
 
 ---
@@ -65,17 +63,8 @@ Empresas e prestadores de serviço muitas vezes enfrentam dificuldades para gere
 - **Express**: framework para Node.js que simplifica a criação de APIs e aplicações web, oferecendo uma estrutura leve e eficiente para o gerenciamento de rotas, middleware e requisições HTTP.
 - **Prisma**: ORM para Node.js e TypeScript que simplifica a interação com bancos de dados PostgreeSQL, proporcionando consultas eficientes e segurança.
 - **Autenticação**: Baseeada em token JWT.
-  
-### **Testes**
-#### **Abordagem de Testes**
-Foram implementados **testes unitários** e de **integração** em toda a aplicação para garantir a qualidade e a robustez do sistema.
-#### **Tecnologias Utilizadas para Testes**
-- ** **: Utilizado para criar testes unitários e de integração no backend, aproveitando as ferramentas integradas ao Django.
-- ** **: Empregadas para carregar dados de teste de forma consistente e automatizada durante a execução dos testes.
-
 ---
-
-## Documentação (PRODUZIR E REVISAR)
+## Documentação
 
 A documentação completa da API é gerada com Swagger, utilizando o **DRF Spectacular**. Inclui detalhes de endpoints, exemplos de uso e respostas esperadas.
 
@@ -83,25 +72,24 @@ A documentação completa da API é gerada com Swagger, utilizando o **DRF Spect
 
 ---
 
-## Instalação (PRODUZIR E REVISAR)
+## Instalação 
 
 ### **Pré-requisitos**
 Certifique-se de que você tenha instalado:
-- `node` e `npm`
-- `Python 3.8+`
+- `node`, `npm` e '.env'
 - Banco de dados PostgreSQL configurado
 
 ### **Passos**
 
 1. **Clone o repositório**:
    ```bash
-   git clone https://github.com/yuribodo/a-base-vem-forte.git
+   git clone [https://github.com/ProgramadoresSemPatria/Team04---Code-Builders.git]
     ```
 
 2. **Navegue para o repositório:**:
 
    ```bash
-   cd a-base-vem-forte
+   cd Team04---Code-Builders
    ```
 
 3. **Instale as dependências:**:
@@ -109,7 +97,7 @@ Certifique-se de que você tenha instalado:
    - For Frontend:
    
      ```bash
-     cd Front
+     cd Frontend
      npm install
      ```
 
@@ -117,59 +105,33 @@ Certifique-se de que você tenha instalado:
 
      ```bash
      cd Backend
-     python -m venv venv # Cria o ambiente virtual
-     source venv/bin/activate  # Linux/Mac # Acessa o ambiente virtual
-     venv\Scripts\activate  # Windows # # Acessa o ambiente virtual
-     pip install -r requirements.txt
+     npm install
      ```
-    
-4. Configure o banco de dados:
-      - Edite o arquivo settings.py do Django com suas credenciais do banco de dados PostgreSQL.
-5. Realize as migrações:
-    ```bash
-    python manage.py makemigrations
-    python manage.py migrate
-    ```
-6. Inicie o servidor Backend:
-  ```bash
-  python manage.py runserver
-  ```
+   
 
-## Executando a Aplicação (PRODUZIR E REVISAR)
+## Executando a Aplicação
 
 - **Para executar o Frontend**:
 1. Navegue até o diretório do Frontend
   ```bash
-  cd Front
+  cd Frontend
   ```
 2. Inicie o servidor React
    ```bash
    npm run dev
    ```
-3. Acesse o frontend no navegador em: http://localhost:3000
+3. Acesse o frontend no navegador em: http://localhost:5173
 
 - **Para executar o Backend**:
-1. Certifique-se de que o ambiente virtual está ativado
-2. Inicie o servidor Django:
+1. Inicie o servidor 
   ```bash
-  python manage.py runserver
+  npm run-dev
   ```
-3. Acesse o backend no navegador em: http://localhost:8000
+2. Acesse o backend no navegador em: http://localhost:5050
   
-
-## Como contribuir
-1. **Fork esse repositório.**
-2. **Crie uma branch para a sua mudança:**
-   ```bash
-   git checkout -b sua-branch
-   ```
-3. **Faça suas alterações e envie um pull request:**
-   ```bash
-     git add .
-     git commit -m "Descrição da mudança"
-     git push origin sua-branch
-   ```
----
-
 ## Contato
-- Developers: Ricardo Franco dos Santos, Breno Silva, Guilherme Resende, Padilha
+- Developers: 
+Ricardo Franco dos Santos: https://github.com/RicardoFrancodosSantos
+Breno Silva: https://github.com/brenosilldev
+Guilherme Resende: https://github.com/guilhermelr291
+Vinicius Padilha: https://github.com/vinipadilha
