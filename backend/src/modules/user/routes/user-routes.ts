@@ -9,4 +9,7 @@ export default (router: Router): void => {
   router.patch('/users/:id', validate(updateUserSchema), (req, res, next) =>
     userController.update(req, res, next)
   );
+  router.get('/check-user', (req, res, next) =>
+    userController.getById(req, res, next)
+  );
 };
