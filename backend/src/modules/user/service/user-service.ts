@@ -38,4 +38,9 @@ export class UserService {
 
     await this.userRepository.update(data);
   }
+
+  async getById(id: number) {
+    const user = await this.userRepository.getById(id);
+    return user;
+  }
 }
