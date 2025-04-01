@@ -177,5 +177,13 @@ describe('UserService', () => {
 
       expect(getByIdSpy).toHaveBeenCalledWith(id);
     });
+
+    test('Should throw if userRepository.getById throws', async () => {
+      vi.spyOn(mockUserRepository, 'getById').mockImplementationOnce(() => {
+        throw new Error();
+      });
+
+      await expect(sut.getById(1)).rejects.toThrow();
+    });
   });
 });
