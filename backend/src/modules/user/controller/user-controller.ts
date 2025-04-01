@@ -28,4 +28,14 @@ export class UserController {
       next(error);
     }
   }
+
+  async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await this.userService.getById(req.userId!);
+
+      res.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
