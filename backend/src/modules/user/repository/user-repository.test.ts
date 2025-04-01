@@ -125,6 +125,14 @@ describe('UserRepository', () => {
 
       expect(result).toBeNull();
     });
+
+    test('Should throw if prisma throws', async () => {
+      vi.mocked(prisma.user.findUnique).mockImplementationOnce(() => {
+        throw new Error();
+      });
+
+      expect(sut.getById(1)).rejects.toThrow();
+    });
   });
 
   describe('create', () => {
