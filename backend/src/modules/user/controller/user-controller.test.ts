@@ -6,6 +6,9 @@ import { Hasher } from '../../auth/protocols/hasher';
 
 const mockUserService = {
   update: vi.fn(),
+  getById: vi
+    .fn()
+    .mockResolvedValueOnce({ name: 'any_name', email: 'any_email' }),
 } as unknown as UserService;
 
 const mockHasher = {
@@ -24,6 +27,7 @@ describe('UserController', () => {
     sut = new UserController(mockUserService, mockHasher);
 
     mockRequest = {
+      userId: 1,
       params: { id: '1' },
       body: { name: 'any_name', email: 'any_email@example.com' },
     };
@@ -134,6 +138,21 @@ describe('UserController', () => {
       );
 
       expect(mockNext).toHaveBeenCalledWith(error);
+    });
+  });
+  describe('getById()', () => {
+    test('Should call userService.getById with correct value', async () => {
+      const getByIdSpy = vi.spyOn(mockUserService, 'getById');
+
+      await sut.getById(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      const { userId } = mockRequest;
+
+      expect(getByIdSpy).toHaveBeenCalledWith(userId);
     });
   });
 });
