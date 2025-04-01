@@ -72,7 +72,3 @@ const RoutesComponent = () => {
 };
 
 export default RoutesComponent;
-function checkuser() {
-  throw new Error("Function not implemented.");
-}
-
